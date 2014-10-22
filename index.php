@@ -18,11 +18,11 @@
 <body>
 <h1>Register here!</h1>
 <p>Fill in your name and email address, then click <strong>Submit</strong> to register.</p>
-<form method="post" action="index.php" enctype="multipart/form-data" >
+<form name="register_form" method="post" action="index.php" enctype="multipart/form-data" >
       Name  <input type="text" name="name" id="name"/></br>
       Email <input type="text" name="email" id="email"/></br>
       Company name <input type="text" name="company_name" id="company_name"/></br>
-      <input type="submit" name="submit" value="Submit" />
+      <input type="submit" name="details-submit" value="Submit" />
 </form>
 <?php
     // DB connection info
@@ -42,7 +42,17 @@
         die(var_dump($e));
     }
     // Insert registration info
-    if(!empty($_POST)) {
+
+    function search_box(){
+      $search_box = '<form name="search_form" method="post" action="index.php" enctype="multipart/form-data" >';
+      $search_box .= '<input type="text" name="search_value" id="search_value"/></br>';
+      $search_box .= '<input type="submit" name="search-submit" value="Search" />';
+      $search_box .= '</form>';
+      return $search_box;
+    }
+
+
+    if(!empty($_POST['name'])) {
     try {
         $name = $_POST['name'];
         $email = $_POST['email'];
@@ -52,6 +62,7 @@
         $sql_insert = "INSERT INTO registration_tbl (name, email, company_name, date) 
                    VALUES (?,?,?,?)";
         $stmt = $conn->prepare($sql_insert);
+	
         $stmt->bindValue(1, $name);
         $stmt->bindValue(2, $email);
 	$stmt->bindValue(3, $company_name);
@@ -67,8 +78,38 @@
     $sql_select = "SELECT * FROM registration_tbl";
     $stmt = $conn->query($sql_select);
     $registrants = $stmt->fetchAll(); 
+    echo "<br><br>";
     if(count($registrants) > 0) {
-        echo "<h2>People who are registered:</h2>";
+	if(count($registrants) > 1){
+	  echo search_box();
+	}
+	if (!empty($_POST['search_value'])){
+	  $search_value = $_POST['search_value'];
+	  $sql_search = "SELECT * FROM registration_tbl WHERE name LIKE '%" . $search_value . "%' OR email LIKE '%" . $search_value . "%' OR company_name LIKE '%" . $search_value . "%'";
+	  $stmt = $conn->query($sql_search);
+	  $search_result = $stmt->fetchAll();
+	  if (count($search_result) > 0 && strlen($search_value) > 1){
+	    echo "<h2>Search results:</h2>";
+	    echo "<table>";
+	    echo "<tr><th>Name</th>";
+	    echo "<th>Email</th>";
+	    echo "<th>Company name</th>";
+	    echo "<th>Date</th></tr>";
+	    foreach($search_result as $result) {
+	      echo "<tr><td>".$result['name']."</td>";
+	      echo "<td>".$result['email']."</td>";
+	      echo "<td>".$result['company_name']."</td>";
+	      echo "<td>".$result['date']."</td></tr>";
+	    }
+	    echo "</table>";
+	    echo "<br>";
+	  }
+	  else{
+	    echo "<p>No results!</p>";
+	  }
+
+	}
+	echo "<h2>People who are registered:</h2>";
         echo "<table>";
         echo "<tr><th>Name</th>";
         echo "<th>Email</th>";
