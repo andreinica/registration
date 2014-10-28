@@ -1,7 +1,0 @@
-function search_box(){
-      $search_box = '<form name="search_form" method="post" action="index.php" enctype="multipart/form-data" >';
-      $search_box .= '<input type="text" name="search_value" id="search_value"/>';
-      $search_box .= '<input type="submit" name="search-submit" value="Search" />';
-      $search_box .= '</form>';
-      return $search_box;
-    }
