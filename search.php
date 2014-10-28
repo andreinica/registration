@@ -10,6 +10,8 @@ function search_box(){
       return $search_box;
     }
 
+echo "<h1>Search page</h1>";
+
 echo search_box();
 
 if (!empty($_POST['search_value'])){
