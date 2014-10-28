@@ -25,22 +25,11 @@
       <input type="submit" name="details-submit" value="Submit" />
 </form>
 <?php
-    // DB connection info
-    //TODO: Update the values for $host, $user, $pwd, and $db
-    //using the values you retrieved earlier from the portal.
-    $host = "eu-cdbr-azure-west-b.cloudapp.net";
-    $user = "bc0d2908cbe0d6";
-    $pwd = "699c9790";
-    $db = "anwebsiAgJpKdW5p";
 
     // Connect to database.
-    try {
-        $conn = new PDO( "mysql:host=$host;dbname=$db", $user, $pwd);
-        $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-    }
-    catch(Exception $e){
-        die(var_dump($e));
-    }
+    
+    require_once 'config.php';
+    
     // Insert registration info
 
     function search_box(){
@@ -82,6 +71,7 @@
     if(count($registrants) > 0) {
 	if(count($registrants) > 1){
 	  echo search_box();
+	  echo "<a href='search.php'>Search in new page</a>";
 	}
 	if (!empty($_POST['search_value'])){
 	  $search_value = $_POST['search_value'];
